@@ -86,3 +86,13 @@ def ping():
     return {
         'status': True
     }
+
+@app.get('/ip')
+def get_ip():
+    try:
+        ip = requests.get('http://lumtest.com/myip.json').json().get('ip')
+    except:
+        ip = None
+    return {
+        'ip': ip
+    }
