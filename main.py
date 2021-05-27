@@ -27,9 +27,6 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
         # Get query params
         params = dict(request.query_params)
 
-        # Delete proxyurl param
-        del params['proxyurl']
-
         # Get headers
         headers = dict(request.headers)
 
@@ -63,6 +60,11 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
             user_agent = random.choice(mobile_useragents)
         if user_agent is not None:
             headers['user-agent'] = user_agent
+        
+        # Delete unneeded params
+        del_params = ['proxyurl', 'simpleproxy_device']
+        for param in del_params:
+            del params[param]
 
         # Get cookies from request
         cookies = dict(request.cookies)
