@@ -74,6 +74,8 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
             proxyurl += f'?{urlencode(params)}'
 
         # Make external request and return response
-        return str(requests.get(proxyurl, headers=headers, cookies=cookies, timeout=5).text)
-    except:
-        return 'Request failed!'
+        resp = requests.get(proxyurl, headers=headers, cookies=cookies, timeout=5
+        resp.raise_for_status()
+        return resp.text
+    except Exception as e:
+        return f'Request failed: {str(e)}'
