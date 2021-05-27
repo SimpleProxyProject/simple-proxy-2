@@ -79,7 +79,7 @@ def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
         resp.raise_for_status()
         return resp.text
     except Exception as e:
-        return f'Request failed.'
+        return 'Request failed.'
 
 @app.get('/ping')
 def ping():
