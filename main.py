@@ -1,6 +1,7 @@
 from fastapi import Security, Depends, FastAPI, HTTPException, Request
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from fastapi.responses import PlainTextResponse
+from starlette.status import HTTP_403_FORBIDDEN
 import requests
 from urllib.parse import urlencode
 import os
@@ -19,8 +20,8 @@ def get_api_key(apikey: str = Security(apikey)):
                             detail='API key not provided or invalid.')
 
 
-@app.get('/', response_class=PlainTextResponse, api_key: APIKey = Depends(get_api_key))
-def root(url: str, request: Request):
+@app.get('/', response_class=PlainTextResponse)
+def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
     try:
         params = dict(request.query_params)
         del params['url']
