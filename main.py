@@ -1,11 +1,12 @@
 from selenium import webdriver
 import os
-
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
 
 app = FastAPI()
 
-@app.get('/')
+@app.get('/', response_class=HTMLResponse)
 async def root(url: str):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')
