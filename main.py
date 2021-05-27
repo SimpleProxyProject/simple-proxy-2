@@ -16,6 +16,6 @@ def root(url: str, request: Request):
         cookies = dict(request.cookies)
         if len(params) > 0:
             url += f'?{urlencode(params)}'
-        return str(requests.get(url, headers=headers, cookies=cookies, params=params, timeout=5).text)
+        return str(requests.get(url, headers=headers, cookies=cookies, timeout=5).text)
     except:
         return 'Request failed!'
