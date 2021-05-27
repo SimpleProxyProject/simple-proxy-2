@@ -20,9 +20,8 @@ def get_api_key(apikey: str = Security(apikey)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
 
-
 @app.get('/', response_class=PlainTextResponse)
-def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)):
+def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
     try:
         # Get query params
         params = dict(request.query_params)
@@ -63,7 +62,7 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
             headers['user-agent'] = user_agent
         
         # Delete unneeded params
-        del_params = ['proxyurl', 'simpleproxy_device']
+        del_params = ['url', 'simpleproxy_device']
         for param in del_params:
             if param in params:
                 del params[param]
@@ -73,11 +72,17 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
 
         # Encode params & update proxy URL
         if len(params) > 0:
-            proxyurl += f'?{urlencode(params)}'
+            url += f'?{urlencode(params)}'
 
         # Make external request and return response
-        resp = requests.get(proxyurl, headers=headers, cookies=cookies, timeout=5)
+        resp = requests.get(url, headers=headers, cookies=cookies, timeout=5)
         resp.raise_for_status()
         return resp.text
     except Exception as e:
         return f'Request failed.'
+
+@app.get('/ping')
+def ping():
+    return {
+        'status': True
+    }
