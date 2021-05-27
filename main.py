@@ -27,6 +27,7 @@ def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
         del params['url']
         headers = dict(request.headers)
         del headers['host']
+        del headers['APIKEY']
         if params.get('host'):
             headers['host'] = params.get('host')
         del headers['accept-encoding']
