@@ -33,7 +33,8 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
         # Remove unwanted headers
         ignore_list = ['host', 'SIMPLEPROXYKEY', 'accept-encoding']
         for header in ignore_list:
-            del headers[header]
+            if header in headers:
+                del headers[header]
 
         # Set custom host header if provided
         if params.get('host'):
@@ -64,7 +65,8 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
         # Delete unneeded params
         del_params = ['proxyurl', 'simpleproxy_device']
         for param in del_params:
-            del params[param]
+            if param in params:
+                del params[param]
 
         # Get cookies from request
         cookies = dict(request.cookies)
@@ -78,4 +80,5 @@ def root(proxyurl: str, request: Request, api_key: APIKey = Depends(get_api_key)
         resp.raise_for_status()
         return resp.text
     except Exception as e:
+        raise e
         return f'Request failed: {str(e)}'
