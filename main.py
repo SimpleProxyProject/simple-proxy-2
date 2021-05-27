@@ -16,13 +16,12 @@ async def root(url: str, device: str = 'desktop'):
     headers = {
         'referrer': 'https://google.com',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US,en;q=0.9',
         'Pragma': 'no-cache',
         'user-agent': user_agent
     }
 
     try:
-        return requests.get(url, headers=headers).text
+        return str(requests.get(url, headers=headers).text)
     except:
         return 'Request failed!'
