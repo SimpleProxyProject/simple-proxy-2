@@ -1,13 +1,25 @@
-from fastapi import FastAPI, Request
+from fastapi import Security, Depends, FastAPI, HTTPException, Request
+from fastapi.security.api_key import APIKeyHeader, APIKey
 from fastapi.responses import PlainTextResponse
 import requests
 from urllib.parse import urlencode
+import os
 
 
 app = FastAPI()
+SECRET_KEY = os.environ.get('APIKEY')
+apikey = APIKeyHeader(name='APIKEY', auto_error=False)
 
 
-@app.get('/')
+def get_api_key(apikey: str = Security(apikey)):
+    if apikey == SECRET_KEY or SECRET_KEY is None:
+        return apikey
+    else:
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN,
+                            detail='API key not provided or invalid.')
+
+
+@app.get('/', response_class=PlainTextResponse, api_key: APIKey = Depends(get_api_key))
 def root(url: str, request: Request):
     try:
         params = dict(request.query_params)
