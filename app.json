@@ -3,8 +3,8 @@
     "description": "A simple FastAPI app to proxy requests to external URLs and return the response as plain text.",
     "repository": "https://github.com/rehmatworks/simple-proxy",
     "env": {
-      "APIKEY": {
-        "description": "API key to protect the endpoint.",
+      "SIMPLEPROXYSECRET": {
+        "description": "A secret to protect the endpoint.",
         "required": false
       }
     }
