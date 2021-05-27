@@ -1,0 +1,10 @@
+{
+    "name": "simple-proxy",
+    "description": "A simple FastAPI app to proxy requests to external URLs and return the response as plain text.",
+    "env": {
+      "APIKEY": {
+        "description": "API key to protect the endpoint.",
+        "required": true
+      }
+    }
+  }
