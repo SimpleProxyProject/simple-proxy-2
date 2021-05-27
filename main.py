@@ -84,6 +84,5 @@ def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
 @app.get('/ping')
 def ping():
     return {
-        'status': True,
-        'new': None
+        'status': True
     }
