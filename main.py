@@ -21,7 +21,7 @@ def get_api_key(apikey: str = Security(apikey)):
                             detail='API key not provided or invalid.')
 
 @app.get('/', response_class=PlainTextResponse, status_code=200)
-def root(url: str, request: Request, response: Response), api_key: APIKey = Depends(get_api_key):
+def root(url: str, request: Request, response: Response, api_key: APIKey = Depends(get_api_key)):
     try:
         # Get query params
         params = dict(request.query_params)
