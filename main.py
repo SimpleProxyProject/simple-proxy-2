@@ -22,6 +22,7 @@ def get_api_key(apikey: str = Security(apikey)):
 
 @app.get('/', response_class=PlainTextResponse, status_code=200)
 def root(url: str, request: Request, response: Response, api_key: APIKey = Depends(get_api_key)):
+    status_code = 500
     try:
         # Get query params
         params = dict(request.query_params)
@@ -76,10 +77,11 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
 
         # Make external request and return response
         resp = requests.get(url, headers=headers, cookies=cookies, timeout=5)
+        status_code = int(resp.status_code)
         resp.raise_for_status()
         return resp.text
     except Exception as e:
-        response.status_code = 500
+        response.status_code = status_code
         return f'Request failed: {str(e)}'
 
 @app.get('/ping')
