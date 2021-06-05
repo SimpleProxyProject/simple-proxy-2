@@ -1,4 +1,4 @@
-from fastapi import Security, Depends, FastAPI, HTTPException, Request
+from fastapi import Security, Depends, FastAPI, HTTPException, Request, Response
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from fastapi.responses import PlainTextResponse
 from starlette.status import HTTP_403_FORBIDDEN
@@ -20,8 +20,8 @@ def get_api_key(apikey: str = Security(apikey)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
 
-@app.get('/', response_class=PlainTextResponse)
-def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
+@app.get('/', response_class=PlainTextResponse, status_code=200)
+def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key), response: Response):
     try:
         # Get query params
         params = dict(request.query_params)
@@ -79,13 +79,13 @@ def root(url: str, request: Request, api_key: APIKey = Depends(get_api_key)):
         resp.raise_for_status()
         return resp.text
     except Exception as e:
-        return 'Request failed.'
+        response.status_code = 500
+        return f'Request failed: {str(e)}'
 
 @app.get('/ping')
 def ping():
     return {
-        'status': True,
-        'deployed': True
+        'status': True
     }
 
 @app.get('/ip')
