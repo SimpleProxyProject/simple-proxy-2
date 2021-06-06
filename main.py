@@ -103,5 +103,5 @@ def get_ip():
 @app.get('/message')
 def it_works():
     return {
-        'data': True
+        'message': True
     }
