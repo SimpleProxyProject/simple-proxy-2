@@ -20,6 +20,12 @@ def get_api_key(apikey: str = Security(apikey)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
 
+@app.get('/version')
+def get_version():
+    return {
+        'version': '3.0.1'
+    }
+
 @app.get('/', response_class=PlainTextResponse, status_code=200)
 def root(url: str, request: Request, response: Response, api_key: APIKey = Depends(get_api_key)):
     status_code = 500
