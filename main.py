@@ -99,3 +99,9 @@ def get_ip():
     return {
         'ip': ip
     }
+
+@app.get('/message')
+def it_works():
+    return {
+        'data': True
+    }
