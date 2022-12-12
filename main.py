@@ -100,7 +100,7 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
         }
 
         # Make external request and return response
-        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=5)
+        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=3)
         status_code = int(resp.status_code)
         resp.raise_for_status()
         return resp.text
