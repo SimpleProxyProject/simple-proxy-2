@@ -94,8 +94,15 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
         if len(params) > 0:
             url += f'?{urlencode(params)}'
 
+        
+        # Proxy setup
+        proxies = {
+            'http': get_proxy_path(),
+            'https': get_proxy_path()
+        }
+
         # Make external request and return response
-        resp = requests.get(url, headers=headers, cookies=cookies, timeout=5)
+        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=5)
         status_code = int(resp.status_code)
         resp.raise_for_status()
         return resp.text
