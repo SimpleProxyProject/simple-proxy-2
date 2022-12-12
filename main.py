@@ -95,8 +95,8 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
         
         # Proxy setup
         proxies = {
-            'http': 'http://SerpsbotSERP-dc-us:!km}}1q{AsGf@gw-dc.ntnt.io:5959',
-            'https': 'http://SerpsbotSERP-dc-us:!km}}1q{AsGf@gw-dc.ntnt.io:5959'
+            'http': 'http://SerpsbotSERP-res-us:!km}}1q{AsGf@gw-am.ntnt.io:5959',
+            'https': 'http://SerpsbotSERP-res-us:!km}}1q{AsGf@gw-am.ntnt.io:5959'
         }
 
         # Make external request and return response
