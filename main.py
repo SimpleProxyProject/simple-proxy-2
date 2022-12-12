@@ -21,6 +21,12 @@ def get_api_key(apikey: str = Security(apikey)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
 
+def get_proxy_path():
+    with open('./ips.txt') as f:
+        data = f.read().splitlines()
+    return str(random.choice(data)).strip()
+
+
 @app.get('/version')
 def get_version():
     return {
