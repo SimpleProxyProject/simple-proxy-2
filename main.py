@@ -118,8 +118,13 @@ def ping():
 
 @app.get('/ip')
 def get_ip():
+    # Proxy setup
+    proxies = {
+        'http': get_proxy_path(),
+        'https': get_proxy_path()
+    }
     try:
-        ip = requests.get('http://lumtest.com/myip.json').json().get('ip')
+        ip = requests.get('http://lumtest.com/myip.json', proxies=proxies).json().get('ip')
     except:
         ip = None
     return {
