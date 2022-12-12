@@ -22,9 +22,7 @@ def get_api_key(apikey: str = Security(apikey)):
                             detail='API key not provided or invalid.')
 
 def get_proxy_path():
-    with open('./ips.txt') as f:
-        data = f.read().splitlines()
-    return str(random.choice(data)).strip()
+    return 'http://SerpsbotSERP-dc-us:!km}}1q{AsGf@gw-dc.ntnt.io:5959'
 
 
 @app.get('/version')
