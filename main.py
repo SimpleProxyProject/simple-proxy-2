@@ -12,6 +12,7 @@ import os
 app = FastAPI()
 SECRET_KEY = os.environ.get('SIMPLEPROXYSECRET')
 apikey = APIKeyHeader(name='SIMPLEPROXYKEY', auto_error=False)
+PROXY_PATH = os.environ.get('PROXY_PATH')
 
 
 def get_api_key(apikey: str = Security(apikey)):
@@ -20,9 +21,6 @@ def get_api_key(apikey: str = Security(apikey)):
     else:
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
-
-def get_proxy_path():
-    return 'http://SerpsbotSERP-dc-US:!km}}1q{AsGf@gw-dc.ntnt.io:5959'
 
 
 @app.get('/version')
@@ -94,10 +92,13 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
 
         
         # Proxy setup
-        proxies = {
-            'http': 'http://SerpsbotSERP-res-us:!km}}1q{AsGf@gw-am.ntnt.io:5959',
-            'https': 'http://SerpsbotSERP-res-us:!km}}1q{AsGf@gw-am.ntnt.io:5959'
-        }
+        if PROXY_PATH:
+            proxies = {
+                'http': PROXY_PATH,
+                'https': PROXY_PATH
+            }
+        else:
+            proxies = None
 
         # Make external request and return response
         resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=3)
@@ -118,8 +119,8 @@ def ping():
 def get_ip():
     # Proxy setup
     proxies = {
-        'http': get_proxy_path(),
-        'https': get_proxy_path()
+        'http': PROXY_PATH,
+        'https': PROXY_PATH
     }
     try:
         ip = requests.get('http://lumtest.com/myip.json', proxies=proxies).json().get('ip')
