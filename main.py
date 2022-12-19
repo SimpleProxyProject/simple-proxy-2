@@ -12,7 +12,6 @@ import os
 app = FastAPI()
 SECRET_KEY = os.environ.get('SIMPLEPROXYSECRET')
 apikey = APIKeyHeader(name='SIMPLEPROXYKEY', auto_error=False)
-PROXY_PATH = os.environ.get('PROXY_PATH')
 
 
 def get_api_key(apikey: str = Security(apikey)):
@@ -90,18 +89,8 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
         if len(params) > 0:
             url += f'?{urlencode(params)}'
 
-        
-        # Proxy setup
-        if PROXY_PATH:
-            proxies = {
-                'http': PROXY_PATH,
-                'https': PROXY_PATH
-            }
-        else:
-            proxies = None
-
         # Make external request and return response
-        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=3)
+        resp = requests.get(url, headers=headers, cookies=cookies, timeout=3)
         status_code = int(resp.status_code)
         resp.raise_for_status()
         return resp.text
@@ -117,13 +106,8 @@ def ping():
 
 @app.get('/ip')
 def get_ip():
-    # Proxy setup
-    proxies = {
-        'http': PROXY_PATH,
-        'https': PROXY_PATH
-    }
     try:
-        ip = requests.get('http://lumtest.com/myip.json', proxies=proxies).json().get('ip')
+        ip = requests.get('http://lumtest.com/myip.json').json().get('ip')
     except:
         ip = None
     return {
