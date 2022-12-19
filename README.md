@@ -1,1 +1,1 @@
-[![Deploy](https://button.deta.dev/1/svg)](https://github.com/SimpleProxyProject/simple-proxy-2)
+[![Deploy](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/SimpleProxyProject/simple-proxy-2)
