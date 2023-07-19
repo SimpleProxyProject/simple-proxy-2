@@ -36,7 +36,10 @@ venv.bak/
 .DS_Store
 *.sage.py
 
-# Env files
+# Git
+.git/
+
+# Env
 .env
 
 # Pytest
