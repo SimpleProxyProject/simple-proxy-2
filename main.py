@@ -1,11 +1,11 @@
+import os
+import random
+from urllib.parse import urlencode
+import httpx
 from fastapi import Security, Depends, FastAPI, HTTPException, Request, Response
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from fastapi.responses import PlainTextResponse
 from starlette.status import HTTP_403_FORBIDDEN
-import requests
-from urllib.parse import urlencode
-import random
-import os
 
 
 app = FastAPI()
@@ -23,13 +23,13 @@ def get_api_key(apikey: str = Security(apikey)):
 
 
 @app.get('/version')
-def get_version():
+async def get_version():
     return {
         'version': '3.0.1'
     }
 
 @app.get('/', response_class=PlainTextResponse, status_code=200)
-def root(url: str, request: Request, response: Response, api_key: APIKey = Depends(get_api_key)):
+async def root(url: str, request: Request, response: Response, api_key: APIKey = Depends(get_api_key)):
     status_code = 500
     try:
         # Get query params
@@ -94,30 +94,29 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
             proxies = None
 
         # Make external request and return response
-        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=3)
-        status_code = int(resp.status_code)
-        resp.raise_for_status()
-        return resp.text
+        async with httpx.AsyncClient(proxies=PROXY_PATH, headers=headers, cookies=cookies, timeout=3) as client:
+            resp = await client.get(url)
+            status_code = int(resp.status_code)
+            resp.raise_for_status()
+            return resp.text
     except Exception as e:
         response.status_code = status_code
         return f'Request failed: {str(e)}'
 
 @app.get('/ping')
-def ping():
+async def ping():
     return {
         'status': True
     }
 
 @app.get('/ip')
-def get_ip():
-    # Proxy setup
-    proxies = {
-        'http': PROXY_PATH,
-        'https': PROXY_PATH
-    }
+async def get_ip():
     try:
-        ip = requests.get('http://lumtest.com/myip.json', proxies=proxies).json().get('ip')
-    except:
+        async with httpx.AsyncClient(proxies=PROXY_PATH) as client:
+            resp = await client.get('http://ip-api.com/json')
+            ip = resp.json().get('query')
+    except Exception as e:
+        raise e
         ip = None
     return {
         'ip': ip
