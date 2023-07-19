@@ -4,6 +4,7 @@ from fastapi.responses import PlainTextResponse
 from starlette.status import HTTP_403_FORBIDDEN
 import requests
 from urllib.parse import urlencode
+from validate_email import validate_email
 import random
 import os
 
@@ -11,6 +12,7 @@ import os
 app = FastAPI()
 SECRET_KEY = os.environ.get('SIMPLEPROXYSECRET')
 apikey = APIKeyHeader(name='SIMPLEPROXYKEY', auto_error=False)
+PROXY_PATH = os.environ.get('PROXY_PATH')
 
 
 def get_api_key(apikey: str = Security(apikey)):
@@ -20,16 +22,17 @@ def get_api_key(apikey: str = Security(apikey)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN,
                             detail='API key not provided or invalid.')
 
-def get_proxy_path():
-    with open('./ips.txt') as f:
-        data = f.read().splitlines()
-    return str(random.choice(data)).strip()
-
 
 @app.get('/version')
 def get_version():
     return {
         'version': '3.0.1'
+    }
+
+@app.get('/validate-email', status_code=200)
+def root(email: str, api_key: APIKey = Depends(get_api_key)):
+    return {
+        'is_valid': validate_email(email, check_blacklist=False, check_dns=True) == True 
     }
 
 @app.get('/', response_class=PlainTextResponse, status_code=200)
@@ -89,13 +92,16 @@ def root(url: str, request: Request, response: Response, api_key: APIKey = Depen
 
         
         # Proxy setup
-        proxies = {
-            'http': get_proxy_path(),
-            'https': get_proxy_path()
-        }
+        if PROXY_PATH:
+            proxies = {
+                'http': PROXY_PATH,
+                'https': PROXY_PATH
+            }
+        else:
+            proxies = None
 
         # Make external request and return response
-        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=5)
+        resp = requests.get(url, headers=headers, proxies=proxies, cookies=cookies, timeout=3)
         status_code = int(resp.status_code)
         resp.raise_for_status()
         return resp.text
@@ -111,8 +117,13 @@ def ping():
 
 @app.get('/ip')
 def get_ip():
+    # Proxy setup
+    proxies = {
+        'http': PROXY_PATH,
+        'https': PROXY_PATH
+    }
     try:
-        ip = requests.get('http://lumtest.com/myip.json').json().get('ip')
+        ip = requests.get('http://lumtest.com/myip.json', proxies=proxies).json().get('ip')
     except:
         ip = None
     return {

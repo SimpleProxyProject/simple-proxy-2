@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3
+FROM tiangolo/uvicorn-gunicorn:python3.8
 ENV PYTHONUNBUFFERED=1
 ADD . /code
 WORKDIR /code
