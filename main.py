@@ -4,7 +4,6 @@ from fastapi.responses import PlainTextResponse
 from starlette.status import HTTP_403_FORBIDDEN
 import requests
 from urllib.parse import urlencode
-from validate_email import validate_email
 import random
 import os
 
@@ -27,12 +26,6 @@ def get_api_key(apikey: str = Security(apikey)):
 def get_version():
     return {
         'version': '3.0.1'
-    }
-
-@app.get('/validate-email', status_code=200)
-def root(email: str, api_key: APIKey = Depends(get_api_key)):
-    return {
-        'is_valid': validate_email(email, check_blacklist=False, check_dns=True) == True 
     }
 
 @app.get('/', response_class=PlainTextResponse, status_code=200)
